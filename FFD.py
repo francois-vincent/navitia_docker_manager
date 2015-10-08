@@ -10,7 +10,7 @@ from importlib import import_module
 
 from fabric import api, context_managers, tasks
 
-import fabfile
+from fabric_navitia import fabfile
 
 
 class FabricForDocker(object):

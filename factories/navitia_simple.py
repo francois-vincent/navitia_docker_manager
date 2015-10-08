@@ -44,8 +44,8 @@ def factory(data_folder='', port='', folder='', commit=False):
         parameters=drp
     )
     dim = DIM.DockerImageManager(df, parameters=drp)
-    dim.build(fail_if_exists=False)
-    dcm = dim.create_container(CONTAINER_NAME, start=True, fail_if_exists=False)
+    dim.build()
+    dcm = dim.create_container(CONTAINER_NAME, start=True)
     ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
     time.sleep(5)
     with utils.chdir(folder):
