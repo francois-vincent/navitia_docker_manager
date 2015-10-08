@@ -1,5 +1,10 @@
 # encoding: utf-8
 
+"""
+This executable will install Navitia2 on an existing prepared debian8 image.
+The resulting container can be commited with a default name.
+"""
+
 
 def absjoin(*p):
     return os.path.abspath(os.path.join(*p))
@@ -20,13 +25,12 @@ FROM navitia/debian8:latest
 
 """
 
-INTER_IMAGE_NAME = 'navitia/debian8_inter'
 FINAL_IMAGE_NAME = 'navitia/debian8_simple'
 CONTAINER_NAME = 'navitia_simple'
 
 
 @clingon.clize
-def factory(data_folder, port='8080', packages=''):
+def factory(data_folder='', port='', folder='', commit=False):
     if DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
         print("image {} already exists".format(FINAL_IMAGE_NAME))
         return
@@ -39,11 +43,13 @@ def factory(data_folder, port='8080', packages=''):
         Dockerfile=Dockerfile,
         parameters=drp
     )
-    dim = DIM.DockerImageManager(df, image_name=INTER_IMAGE_NAME, parameters=drp)
+    dim = DIM.DockerImageManager(df, parameters=drp)
     dim.build(fail_if_exists=False)
     dcm = dim.create_container(CONTAINER_NAME, start=True, fail_if_exists=False)
     ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
     time.sleep(5)
-    with utils.chdir(packages):
+    with utils.chdir(folder):
         ffd.execute('deploy_from_scratch')
-        dcm.stop().commit(FINAL_IMAGE_NAME)
+    if commit:
+        dcm.stop().commit(FINAL_IMAGE_NAME).remove_container()
+        dim.remove_image()

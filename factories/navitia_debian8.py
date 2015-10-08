@@ -1,5 +1,11 @@
 # encoding: utf-8
 
+"""
+This executable will build a debian8 prepared image for Navitia2,
+including: apache2, ssh, redis, postgresql, rabbitmq, supervisord
+and a user named navitia.
+"""
+
 
 def absjoin(*p):
     return os.path.abspath(os.path.join(*p))

@@ -13,14 +13,14 @@ sys.path[0] = ROOT
 from clingon import clingon
 clingon.DEBUG = True
 
-from navitia_docker_manager import DIM, FFD
+from navitia_docker_manager import DIM, FFD, utils
 
 IMAGE_NAME = 'navitia/debian8_simple'
 CONTAINER_NAME = 'navitia_simple'
 
 
 @clingon.clize
-def factory(data_folder, port='8080', source='debian8', packages=''):
+def factory(data_folder, port='8080', source='debian8', folder=''):
     drp = DIM.DockerRunParameters(
         hostname='navitia',
         volumes=(data_folder + ':/srv/ed/data',),
@@ -38,7 +38,6 @@ def factory(data_folder, port='8080', source='debian8', packages=''):
     dim.build(fail_if_exists=False)
     dcm = dim.create_container(CONTAINER_NAME, start=True)
     ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib=source)
-    if packages:
-        os.chdir(os.path.abspath(os.path.expanduser(packages)))
     time.sleep(5)
-    ffd.execute('deploy_from_scratch')
+    with utils.chdir(folder):
+        ffd.execute('deploy_from_scratch')

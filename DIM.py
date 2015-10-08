@@ -74,7 +74,7 @@ class DockerRunParameters(betterdict):
                 # TODO does not accept format host_ip:host_port:guest_port yet
                 host, guest = port.rsplit(':', 1)
                 guest = int(guest)
-                port_bindings[guest] = int(host)
+                port_bindings[guest] = int(host) if host else None
                 ports.add(guest)
             elif '-' in port:
                 start, end = port.split('-')
@@ -185,7 +185,7 @@ class DockerImageManager(object):
 
     @staticmethod
     def random_name():
-        return random_hex()
+        return 'nav_' + random_hex()
 
     @property
     def exists(self):
@@ -204,6 +204,11 @@ class DockerImageManager(object):
             with self.source.get_docker_context() as context:
                 wait(docker_client.build(path=context, tag=self.image_name, rm=True))
         return self
+
+    def create_image(self):
+        if isinstance(self.source, DockerFile):
+            return self.build()
+        return self.pull()
 
     def inspect(self, field=None, image_name=None):
         try:
@@ -333,5 +338,6 @@ class DockerContainerManager(object):
         return self
 
     def remove_container(self):
+        self.stop()
         docker_client.remove_container(self.container_name)
         return self

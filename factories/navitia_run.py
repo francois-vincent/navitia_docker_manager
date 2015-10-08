@@ -1,10 +1,13 @@
 # encoding: utf-8
 
+"""
+This executable will execute a fabric_navitia command on a running container
+"""
 
 def absjoin(*p):
     return os.path.abspath(os.path.join(*p))
 
-import os
+import os.path
 ROOT = absjoin(__file__, '..', '..', '..')
 import sys
 sys.path[0] = ROOT
@@ -12,16 +15,13 @@ sys.path[0] = ROOT
 from clingon import clingon
 clingon.DEBUG = True
 
-from image_manager import DIM, FFD
-
-CONTAINER_NAME = 'navitia_simple'
+from navitia_docker_manager import DIM, FFD, utils
 
 
 @clingon.clize
-def factory(cmd, packages='', source='debian8'):
-    dcm = DIM.DockerContainerManager(container_name=CONTAINER_NAME)
-    ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib=source)
+def factory(cmd, container='navitia_simple', folder='', distrib='debian8'):
+    dcm = DIM.DockerContainerManager(container_name=container)
+    ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib=distrib)
     dcm.start()
-    if packages:
-        os.chdir(os.path.abspath(os.path.expanduser(packages)))
-    ffd.execute(cmd)
+    with utils.chdir(folder):
+        ffd.execute(cmd)
