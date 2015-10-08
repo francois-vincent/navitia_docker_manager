@@ -1,0 +1,3 @@
+
+# Warning: a slash ('/') in hostname drives your rabbit nuts
+RUN apt-get install -y rabbitmq-server
