@@ -44,12 +44,15 @@ def factory(data_folder='', port='', folder='', commit=False):
         parameters=drp
     )
     dim = DIM.DockerImageManager(df, parameters=drp)
-    dim.build()
-    dcm = dim.create_container(CONTAINER_NAME, start=True)
-    ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
-    time.sleep(5)
-    with utils.chdir(folder):
-        ffd.execute('deploy_from_scratch')
-    if commit:
-        dcm.stop().commit(FINAL_IMAGE_NAME).remove_container()
-        dim.remove_image()
+    try:
+        dim.build()
+        dcm = dim.create_container(CONTAINER_NAME, start=True)
+        ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
+        time.sleep(5)
+        with utils.chdir(folder):
+            ffd.execute('deploy_from_scratch')
+        if commit:
+            dcm.stop().commit(FINAL_IMAGE_NAME).remove_container()
+    finally:
+        if commit:
+            dim.remove_image()
