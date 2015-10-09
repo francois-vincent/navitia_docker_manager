@@ -283,17 +283,20 @@ class DockerContainerManager(object):
     def is_running(self):
         return self.inspect('State.Running')
 
-    def create(self, start=False, fail_if_exists=True):
+    def create(self, start=False, if_exist='fail'):
+        """
+        Create a container
+        :param if_exist: what to do if container already exists
+               'fail': raise exception, 'remove': remove container, 'silent': silently do nothing
+        """
         if self.exists:
-            if fail_if_exists:
+            if if_exist == 'fail':
                 raise RuntimeError("Container '{}' already exists".format(self.container_name))
-        else:
-            try:
-                docker_client.create_container(**self.parameters)
-            except docker.errors.APIError:
-                self.image.pull()
-                docker_client.create_container(**self.parameters)
-        if start and not self.is_running:
+            elif if_exist == 'remove':
+                self.remove_container()
+        if not self.exists:
+            docker_client.create_container(**self.parameters)
+        if start:
             self.start()
         return self
 
@@ -339,5 +342,7 @@ class DockerContainerManager(object):
 
     def remove_container(self):
         self.stop()
-        docker_client.remove_container(self.container_name)
+        if self.exists:
+            self.log.debug("Removing container {}".format(self.container_name))
+            docker_client.remove_container(self.container_name)
         return self
