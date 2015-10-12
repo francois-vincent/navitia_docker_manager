@@ -30,7 +30,7 @@ CONTAINER_NAME = 'navitia_simple'
 
 
 @clingon.clize
-def factory(data_folder='', port='', folder='', commit=False):
+def factory(data_folder='', port='', folder='', commit=False, remove=False):
     if DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
         print("image {} already exists".format(FINAL_IMAGE_NAME))
         return
@@ -52,7 +52,9 @@ def factory(data_folder='', port='', folder='', commit=False):
         with utils.chdir(folder):
             ffd.execute('deploy_from_scratch')
         if commit:
-            dcm.stop().commit(FINAL_IMAGE_NAME).remove_container()
+            dcm.stop().commit(FINAL_IMAGE_NAME)
+        if remove:
+            dcm.remove_container()
     finally:
-        if commit:
+        if commit or remove:
             dim.remove_image()
