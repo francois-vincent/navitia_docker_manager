@@ -31,7 +31,7 @@ CONTAINER_NAME = 'navitia_simple'
 
 @clingon.clize
 def factory(data_folder='', port='', folder='', commit=False, remove=False):
-    if DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
+    if commit and DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
         print("image {} already exists".format(FINAL_IMAGE_NAME))
         return
     drp = DIM.DockerRunParameters(
