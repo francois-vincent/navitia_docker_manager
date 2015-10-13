@@ -104,4 +104,4 @@ def semver_max_ver(*v):
 
 
 def get_packet_version(pattern='navitia*deb'):
-    return semver.max_ver(*[p.split('_')[1] for p in glob.glob(pattern)])
+    return semver_max_ver(*[p.split('_')[1] for p in glob.glob(pattern)])

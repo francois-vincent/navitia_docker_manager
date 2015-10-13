@@ -31,8 +31,8 @@ FINAL_IMAGE_NAME = 'navitia/debian8_simple'
 CONTAINER_NAME = 'navitia_simple'
 
 
-@clingon.clize(set_version=('s', 'v'))
-def factory(data_folder='', port='', packet_folder='', commit=False, remove=False, set_version=False):
+@clingon.clize(navitia_folder=('n', 'f'), set_version=('s', 'v'))
+def factory(data_folder='', port='', navitia_folder='', commit=False, remove=False, set_version=False):
     if commit and DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
         print("image {} already exists".format(FINAL_IMAGE_NAME))
         return
@@ -51,7 +51,7 @@ def factory(data_folder='', port='', packet_folder='', commit=False, remove=Fals
         dcm = dim.create_container(CONTAINER_NAME, start=True, if_exist='remove')
         ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
         time.sleep(5)
-        with utils.chdir(packet_folder):
+        with utils.chdir(navitia_folder):
             ffd.execute('deploy_from_scratch')
         if commit:
             image_name = FINAL_IMAGE_NAME
@@ -61,5 +61,5 @@ def factory(data_folder='', port='', packet_folder='', commit=False, remove=Fals
         if remove:
             dcm.remove_container()
     finally:
-        if commit or remove:
+        if remove:
             dim.remove_image()
