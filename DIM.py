@@ -336,8 +336,14 @@ class DockerContainerManager(object):
             docker_client.stop(self.container_name)
         return self
 
-    def commit(self, image_name):
-        docker_client.commit(self.container_name, image_name)
+    def commit(self, image_name, tag=''):
+        params = (self.container_name, image_name)
+        message = "Commiting container {} as {}".format(*params)
+        if tag:
+            params += (tag,)
+            message += ':' + tag
+        self.log.debug(message)
+        docker_client.commit(*params)
         return self
 
     def remove_container(self):
