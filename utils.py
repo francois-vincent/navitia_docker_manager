@@ -5,6 +5,7 @@ from contextlib import contextmanager, nested
 import glob
 import os
 import random
+import semver
 import shutil
 import tempfile
 
@@ -92,5 +93,15 @@ def random_hex(len=24):
     return ''.join(random.choice('0123456789abcdef') for _ in xrange(len))
 
 
-def get_packet_version(pattern='navitia-tyr*deb'):
-    return glob.glob(pattern)[0].split('_')[1]
+def semver_max_ver(*v):
+    l = len(v)
+    if l > 2:
+        return semver.max_ver(v[0], semver_max_ver(*v[1:]))
+    elif l == 2:
+        return semver.max_ver(*v)
+    else:
+        return v[0]
+
+
+def get_packet_version(pattern='navitia*deb'):
+    return semver.max_ver(*[p.split('_')[1] for p in glob.glob(pattern)])
