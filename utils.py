@@ -2,6 +2,7 @@
 
 import collections
 from contextlib import contextmanager, nested
+import glob
 import os
 import random
 import shutil
@@ -89,3 +90,7 @@ def wait(iterable):
 
 def random_hex(len=24):
     return ''.join(random.choice('0123456789abcdef') for _ in xrange(len))
+
+
+def get_packet_version(pattern='navitia-tyr*deb'):
+    return glob.glob(pattern)[0].split('_')[1]
