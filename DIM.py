@@ -191,8 +191,12 @@ class DockerImageManager(object):
     def exists(self):
         return bool(self.inspect())
 
+    @property
+    def untagged_name(self):
+        return self.image_name.split(':')[0]
+
     def pull(self):
-        docker_client.pull(self.source)
+        wait(docker_client.pull(self.source, stream=True))
         return self
 
     def build(self, fail_if_exists=True):
