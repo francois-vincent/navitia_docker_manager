@@ -35,7 +35,7 @@ CONTAINER_NAME = 'navitia_simple'
 def factory(data_folder='', port='', navitia_folder='', commit=False, remove=False, set_version=''):
     if commit and DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
         print("image {} already exists".format(FINAL_IMAGE_NAME))
-        return
+        return 1
     drp = DIM.DockerRunParameters(
         hostname='navitia',
         volumes=(data_folder + ':/srv/ed/data',),
