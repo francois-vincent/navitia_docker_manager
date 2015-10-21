@@ -60,8 +60,7 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
         ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
         time.sleep(5)
         with utils.chdir(navitia_folder):
-            pass
-            # ffd.execute('deploy_from_scratch')
+            ffd.execute('deploy_from_scratch')
         if commit:
             dcm.stop()
             if version:
