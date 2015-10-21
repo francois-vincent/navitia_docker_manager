@@ -56,7 +56,9 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
         if commit:
             dcm.stop()
             if set_version.lower() in ('true', 'yes'):
-                dcm.commit(FINAL_IMAGE_NAME, utils.get_packet_version(navitia_folder))
+                version = utils.get_packet_version(navitia_folder)
+                dcm.commit(FINAL_IMAGE_NAME, version)
+                os.environ['DEBIAN8_SIMPLE_VERSION'] = version
             elif not set_version or set_version.lower() in ('false', 'no'):
                 dcm.commit(FINAL_IMAGE_NAME)
             else:
