@@ -36,7 +36,7 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
     if commit:
         if set_version.lower() in ('true', 'yes'):
             version = utils.get_packet_version(navitia_folder)
-            os.environ['DEBIAN8_SIMPLE_VERSION'] = version
+            sys.stdout.write(version)
         elif not set_version or set_version.lower() in ('false', 'no'):
             version = None
         else:
