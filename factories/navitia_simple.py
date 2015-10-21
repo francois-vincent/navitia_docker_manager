@@ -33,9 +33,18 @@ CONTAINER_NAME = 'navitia_simple'
 
 @clingon.clize(navitia_folder=('n', 'f'), set_version=('s', 'v'))
 def factory(data_folder='', port='', navitia_folder='', commit=False, remove=False, set_version=''):
-    if commit and DIM.DockerImageManager('', image_name=FINAL_IMAGE_NAME).exists:
-        print("image {} already exists".format(FINAL_IMAGE_NAME))
-        return 1
+    if commit:
+        if set_version.lower() in ('true', 'yes'):
+            version = utils.get_packet_version(navitia_folder)
+            os.environ['DEBIAN8_SIMPLE_VERSION'] = version
+        elif not set_version or set_version.lower() in ('false', 'no'):
+            version = None
+        else:
+            version = set_version
+        image_name = "{}:{}".format(FINAL_IMAGE_NAME, version)
+        if DIM.DockerImageManager('', image_name=image_name).exists:
+            print("image {} already exists".format(image_name))
+            return 1
     drp = DIM.DockerRunParameters(
         hostname='navitia',
         volumes=(data_folder + ':/srv/ed/data',),
@@ -55,14 +64,10 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
             ffd.execute('deploy_from_scratch')
         if commit:
             dcm.stop()
-            if set_version.lower() in ('true', 'yes'):
-                version = utils.get_packet_version(navitia_folder)
+            if version:
                 dcm.commit(FINAL_IMAGE_NAME, version)
-                os.environ['DEBIAN8_SIMPLE_VERSION'] = version
-            elif not set_version or set_version.lower() in ('false', 'no'):
-                dcm.commit(FINAL_IMAGE_NAME)
             else:
-                dcm.commit(FINAL_IMAGE_NAME, set_version)
+                dcm.commit(FINAL_IMAGE_NAME)
         if remove:
             dcm.remove_container()
     finally:
