@@ -91,7 +91,7 @@ class DockerRunParameters(betterdict):
 
     def finalize(self):
         if self.kwargs:
-            self['host_config'] = docker.Client.create_host_config(**self.kwargs)
+            self['host_config'] = docker.utils.create_host_config(**self.kwargs)
         if 'ports' in self:
             self['ports'] = list(self['ports'])
             self['ports'].sort()
