@@ -24,8 +24,8 @@ class FabricForDocker(object):
 
     def set_platform(self):
         module = import_module('navitia_docker_manager.platforms.' + self.platform)
-        getattr(module, self.platform)(self.get_host())
         api.env.distrib = self.distrib
+        getattr(module, self.platform)(self.get_host())
         return self
 
     def get_host(self):

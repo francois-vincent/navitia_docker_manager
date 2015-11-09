@@ -14,8 +14,6 @@ def env_common(tyr, ed, kraken, jormun):
     env.use_ssh_config = True
     env.container = 'docker'
     env.use_syslog = False
-    # just to verify /v1/coverage/$instance/status
-    env.version = '0.101.2'
 
     env.roledefs = {
         'tyr':  [tyr],
@@ -40,6 +38,10 @@ def env_common(tyr, ed, kraken, jormun):
 
     env.jormungandr_url = jormun.split('@')[-1]
     env.kraken_monitor_base_url = kraken.split('@')[-1]
+
+    base_apache_conf = '/etc/apache2/conf.d' if env.distrib == 'debian7' else '/etc/apache2/conf-enabled'
+    env.jormungandr_apache_config_file = os.path.join(base_apache_conf, 'jormungandr.conf')
+    env.kraken_monitor_apache_config_file = os.path.join(base_apache_conf, 'monitor-kraken.conf')
 
     # add your own custom configuration variables in file custom.py
     # e.g. env.email
