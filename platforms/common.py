@@ -39,6 +39,8 @@ def env_common(tyr, ed, kraken, jormun):
     env.jormungandr_url = jormun.split('@')[-1]
     env.kraken_monitor_base_url = kraken.split('@')[-1]
 
+    env.jormungandr_url_prefix = '/navitia'
+
     base_apache_conf = '/etc/apache2/conf.d' if env.distrib == 'debian7' else '/etc/apache2/conf-enabled'
     env.jormungandr_apache_config_file = os.path.join(base_apache_conf, 'jormungandr.conf')
     env.kraken_monitor_apache_config_file = os.path.join(base_apache_conf, 'monitor-kraken.conf')
