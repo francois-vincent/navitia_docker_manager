@@ -32,8 +32,8 @@ def env_common(tyr, ed, kraken, jormun):
     env.jormungandr_is_public = True
     env.tyr_url = 'localhost:6000'
 
-    env.tyr_backup_dir_template = '{base}/{instance}/backup/'
-    env.tyr_source_dir_template = '{base}/data/{instance}'
+    env.tyr_backup_dir_template = '/srv/ed/data/{instance}/backup/'
+    env.tyr_source_dir_template = '/srv/ed/data/{instance}'
     env.tyr_base_destination_dir = '/srv/ed/data/'
 
     env.jormungandr_url = jormun.split('@')[-1]
