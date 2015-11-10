@@ -26,19 +26,12 @@ command=/usr/sbin/rabbitmq-server
 priority=100
 autorestart=true
 
-[program:kraken]
-command=/srv/kraken/default/kraken
-priority=200
-user=www-data
-directory=/srv/kraken/default/
-autorestart=true
-
 [program:tyr_worker]
 command=/usr/local/bin/celery -A tyr.tasks --events --pidfile=/tmp/tyr_worker.pid worker
 priority=300
 user=www-data
 environment=TYR_CONFIG_FILE="/srv/tyr/settings.py"
-autorestart=true
+autorestart=false
 
 [program:tyr_beat]
 command=/usr/local/bin/celery -A tyr.tasks --gid=www-data --pidfile=/tmp/tyr_beat.pid beat
@@ -46,4 +39,11 @@ priority=400
 user=www-data
 directory=/tmp
 environment=TYR_CONFIG_FILE="/srv/tyr/settings.py"
-autorestart=true
+autorestart=false
+
+[program:kraken_default]
+command=/srv/kraken/default/kraken
+priority=200
+user=www-data
+directory=/srv/kraken/default/
+autorestart=false

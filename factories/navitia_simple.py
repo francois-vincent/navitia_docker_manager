@@ -25,6 +25,10 @@ from navitia_docker_manager import DIM, FFD, utils
 Dockerfile = """
 FROM navitia/debian8:latest
 
+# mapped volumes (or not)
+RUN mkdir -m 777 -p /srv/ed/data
+
+COPY {supervisord_conf} /etc/supervisor/conf.d/supervisord.conf
 """
 
 FINAL_IMAGE_NAME = 'navitia/debian8_simple'
@@ -50,6 +54,7 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
         ports=(port + ':80',)
     )
     df = DIM.DockerFile(
+        os.path.join('factories', CONTAINER_NAME, 'supervisord.conf.jinja'),
         Dockerfile=Dockerfile,
         parameters=drp
     )

@@ -27,9 +27,9 @@ CONTAINER_NAME = 'navitia_simple'
 @clingon.clize
 def factory(source='debian8'):
     df = DIM.DockerFile(
-        os.path.join('ssh', 'unsecure_key.pub'),
-        os.path.join('factories', CONTAINER_NAME, 'supervisord.conf'),
         os.path.join('factories', source, 'Dockerfile'),
+        os.path.join('factories', source, 'supervisord.conf'),
+        os.path.join('ssh', 'unsecure_key.pub'),
         add_ons=('apache', 'user', 'french', 'postgres', 'sshserver', 'rabbitmq', 'redis', 'supervisor'),
         template_context=dict(user='navitia', password='navitia', home_ssh='/home/navitia/.ssh')
     )

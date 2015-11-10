@@ -3,6 +3,7 @@
 import collections
 from contextlib import contextmanager, nested
 import glob
+from jinja2 import Template
 import os
 import random
 import semver
@@ -48,12 +49,14 @@ def temp_file(temp, file_name, content, context):
     """
     path = None
     try:
+        use_jinja = file_name.endswith('.jinja')
+        file_name = file_name.replace('.jinja', '')
         file_name = file_name.replace('.', '_')
         path = os.path.join(temp, file_name)
         log.debug("Create temp file {}".format(path))
         context[file_name] = file_name
         with open(path, 'w') as f:
-            f.write(render(content, context))
+            f.write(render(content, context, use_jinja=use_jinja))
         yield path
     finally:
         if path:
@@ -62,12 +65,12 @@ def temp_file(temp, file_name, content, context):
 
 
 @contextmanager
-def chain_temp_files(files, order, context):
+def chain_temp_files(files, context):
     temp = None
     try:
         temp = tempfile.mkdtemp(dir=global_temp_im_dir)
         log.debug("Create temp folder {}".format(temp))
-        with nested(*[temp_file(temp, name, files[name], context) for name in order]):
+        with nested(*[temp_file(temp, name, content, context) for name, content in files.iteritems()]):
             yield temp
     finally:
         if temp:
@@ -75,10 +78,10 @@ def chain_temp_files(files, order, context):
             shutil.rmtree(temp, ignore_errors=True)
 
 
-def render(string, context):
+def render(string, context, use_jinja=False):
     if isinstance(string, unicode):
         string = string.encode('utf-8')
-    return string.format(**context)
+    return Template(string).render(**context) if use_jinja else string.format(**context)
 
 
 def wait(iterable):

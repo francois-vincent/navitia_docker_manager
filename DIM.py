@@ -6,6 +6,7 @@ A set of convenience classes to create and manage Docker Images and Containers
 """
 
 from __future__ import unicode_literals, print_function
+from collections import OrderedDict
 from contextlib import contextmanager
 import os
 ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -117,7 +118,7 @@ class DockerFile(object):
         self.add_ons = options.pop('add_ons', None) or ()
         # a file can be a real file, specified by a path,
         # or a pseudo file, specified via a (name, content) pair
-        self.files, self.order = {}, []
+        self.files = OrderedDict()
         for file in files:
             if isinstance(file, tuple):
                 name, content = file
@@ -126,11 +127,11 @@ class DockerFile(object):
                 with open(os.path.expanduser(file), 'rb') as f:
                     content = f.read()
             self.files[name] = content
-            self.order.append(name)
         self.files.update(options)
-        self.order.extend(options)
         if not 'Dockerfile' in self.files:
             raise ValueError("No Dockerfile specified")
+        # Dockerfile must be the last element
+        self.files['Dockerfile'] = self.files.pop('Dockerfile')
 
     def process_parameters(self):
         dockerfile = self.files['Dockerfile']
@@ -157,7 +158,7 @@ class DockerFile(object):
     def get_docker_context(self, process=True):
         if process:
             self.process_addons().process_parameters()
-        with chain_temp_files(self.files, self.order, self.template_context) as context:
+        with chain_temp_files(self.files, self.template_context) as context:
             yield context
 
 
