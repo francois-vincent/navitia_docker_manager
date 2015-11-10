@@ -54,7 +54,7 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
         ports=(port + ':80',)
     )
     df = DIM.DockerFile(
-        os.path.join('factories', CONTAINER_NAME, 'supervisord.conf.jinja'),
+        os.path.join('factories', CONTAINER_NAME, 'supervisord.conf'),
         Dockerfile=Dockerfile,
         parameters=drp
     )
