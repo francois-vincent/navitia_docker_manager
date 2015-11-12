@@ -61,10 +61,11 @@ class FabricForDocker(object):
         return self
 
     def run(self, cmd, sudo=False):
-        launch = operations.sudo if sudo else operations.run
+        host = self.get_host()
+        launch = operations.sudo if sudo and not host.startswith('root@') else operations.run
         with context_managers.settings(
                 context_managers.hide('stdout'),
-                host_string=self.get_host()):
+                host_string=host):
             self.output = launch(cmd)
         return self
 
