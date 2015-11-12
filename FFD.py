@@ -26,12 +26,12 @@ class FabricForDocker(object):
         if container:
             self.container = container
         module = import_module('navitia_docker_manager.platforms.' + self.platform)
-        api.env.distrib = self.distrib
+        api.env.distrib = getattr(self, 'distrib')
         getattr(module, self.platform)(self.get_host() if self.container else 'a@b')
         return self
 
     def get_host(self):
-        return "{}@{}".format(self.user, self.container.inspect())
+        return "{}@{}".format(getattr(self, 'user', 'root'), self.container.inspect())
 
     @property
     def get_env(self):
