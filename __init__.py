@@ -3,7 +3,7 @@
 import logging
 import sys
 
-import DIM, utils
+import DIM, FFD, utils
 
 
 log_levels = {
@@ -11,6 +11,7 @@ log_levels = {
     'INFO': logging.INFO,
     'WARNING': logging.WARNING,
 }
+
 
 def get_stdout_logger(log_level, name=__name__):
     log = logging.getLogger(name)
@@ -21,4 +22,4 @@ def get_stdout_logger(log_level, name=__name__):
     log.setLevel(log_level)
     return log
 
-utils.log = DIM.log = get_stdout_logger(logging.DEBUG)
+utils.log = FFD.log = DIM.log = get_stdout_logger(logging.DEBUG)

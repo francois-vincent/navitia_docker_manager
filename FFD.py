@@ -15,21 +15,27 @@ import fabfile
 
 class FabricForDocker(object):
 
-    def __init__(self, container, **kwargs):
+    def __init__(self, container, **options):
         self.container = container
-        self.log = container.log
-        self.__dict__.update(kwargs)
+        self.log = options.pop('log', log)
+        self.__dict__.update(options)
         if hasattr(self, 'platform'):
             self.set_platform()
 
-    def set_platform(self):
+    def set_platform(self, container=None):
+        if container:
+            self.container = container
         module = import_module('navitia_docker_manager.platforms.' + self.platform)
         api.env.distrib = self.distrib
-        getattr(module, self.platform)(self.get_host())
+        getattr(module, self.platform)(self.get_host() if self.container else 'a@b')
         return self
 
     def get_host(self):
         return "{}@{}".format(self.user, self.container.inspect())
+
+    @property
+    def get_env(self):
+        return api.env
 
     def execute(self, cmd, *args, **kwargs):
         """
