@@ -8,7 +8,7 @@ A set of convenience classes to run fabric scripts on docker containers
 from __future__ import unicode_literals, print_function
 from importlib import import_module
 
-from fabric import api, context_managers, tasks
+from fabric import api, operations, context_managers, tasks
 
 import fabfile
 
@@ -58,4 +58,17 @@ class FabricForDocker(object):
             raise RuntimeError("Unknown Fabric command %s" % cmd)
         with context_managers.settings(context_managers.hide('stdout'), **let):
             api.execute(command, *args, **kwargs)
+        return self
+
+    def run(self, cmd, sudo=False):
+        launch = operations.sudo if sudo else operations.run
+        with context_managers.settings(
+                context_managers.hide('stdout'),
+                host_string=self.get_host()):
+            self.output = launch(cmd)
+        return self
+
+    def put(self, source, dest, sudo=False):
+        with context_managers.settings(host_string=self.get_host()):
+            operations.put(source, dest, use_sudo=sudo)
         return self

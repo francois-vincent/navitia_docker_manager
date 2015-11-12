@@ -20,6 +20,8 @@ FROM navitia/debian8:latest
 
 # mapped volumes
 VOLUME /srv/ed/data
+VOLUME /artemis/data
+VOLUME /artemis/source
 
 COPY {supervisord_conf} /etc/supervisor/conf.d/supervisord.conf
 """
@@ -28,8 +30,16 @@ FINAL_IMAGE_NAME = 'navitia/debian8_artemis'
 CONTAINER_NAME = 'artemis'
 
 
-@clingon.clize(navitia_folder=('n', 'f'), set_version=('s', 'v'))
-def factory(data_folder='', port='', navitia_folder='', commit=False, remove=False, set_version='', tag=False):
+@clingon.clize(artemis_data=('ad,'), artemis_source=('as,'), set_version=('s', 'v'))
+def factory(navitia_folder='',
+            data_folder='',
+            port='',
+            artemis_data='',
+            artemis_source='',
+            commit=False,
+            remove=False,
+            set_version='',
+            tag=False):
     if commit:
         if set_version.lower() in ('true', 'yes'):
             version = utils.get_packet_version(navitia_folder)
@@ -43,7 +53,9 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
             return 1
     drp = DIM.DockerRunParameters(
         hostname='navitia',
-        volumes=(data_folder + ':/srv/ed/data',),
+        volumes=(data_folder + ':/srv/ed/data',
+                 artemis_data + ':/artemis/data',
+                 artemis_source + ':/artemis/source'),
         ports=(port + ':80',)
     )
     ffd = FFD.FabricForDocker(None, user='navitia', platform='artemis', distrib='debian8')
