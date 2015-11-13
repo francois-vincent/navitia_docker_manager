@@ -24,6 +24,7 @@ RUN pip install pytest
 RUN mkdir -m 777 -p /srv/ed/data
 
 COPY {supervisord_conf} /etc/supervisor/conf.d/supervisord.conf
+COPY {kraken_service_wrapper} /usr/local/bin/kraken_service_wrapper
 """
 
 FINAL_IMAGE_NAME = 'navitia/debian8_artemis'
@@ -61,6 +62,7 @@ def factory(navitia_folder='',
     ffd = FFD.FabricForDocker(None, user='navitia', platform='artemis', distrib='debian8')
     df = DIM.DockerFile(
         os.path.join('factories', CONTAINER_NAME, 'supervisord.conf.jinja'),
+        os.path.join('factories', CONTAINER_NAME, 'kraken_service_wrapper'),
         Dockerfile=Dockerfile,
         parameters=drp,
         template_context=dict(krakens=list(ffd.get_env.instances))

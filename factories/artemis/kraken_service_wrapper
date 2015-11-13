@@ -1,0 +1,10 @@
+#! /bin/sh
+
+# small wrapper around the different kraken services
+# this is used to restrict the sudo rights of jenkins only to this wrapper
+
+kraken_name=kraken_$1
+action=$2
+
+#echo /usr/bin/supervisorctl $action $kraken_name
+/usr/bin/supervisorctl $action $kraken_name
