@@ -18,7 +18,7 @@ from navitia_docker_manager import DIM, FFD, utils
 Dockerfile = """
 FROM navitia/debian8:latest
 
-pip install pytest
+RUN pip install pytest
 
 # mapped volumes (or not)
 RUN mkdir -m 777 -p /srv/ed/data
