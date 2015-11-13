@@ -341,7 +341,7 @@ class DockerContainerManager(object):
             docker_client.stop(self.container_name)
         return self
 
-    def commit(self, image_name, version='', tag=False):
+    def commit(self, image_name, version=''):
         params = (self.container_name, image_name)
         message = "Commiting container {} as {}".format(*params)
         if version:
@@ -349,8 +349,16 @@ class DockerContainerManager(object):
             message += ':' + version
         self.log.debug(message)
         docker_client.commit(*params)
-        if tag:
-            docker_client.tag('{}:{}'.format(image_name, version), image_name)
+        return self
+
+    def tag(self, image_name, version=''):
+        tagged_name = '{}:{}'.format(image_name, version) if version else image_name
+        image_name = image_name.split(':')[0]
+        if image_name == tagged_name:
+            self.log.warning("Trying to tag image_name == tagged_name, nothing to do")
+            return self
+        self.log.debug("Tagging image {} as last version".format(tagged_name))
+        docker_client.tag(tagged_name, image_name)
         return self
 
     def remove_container(self):

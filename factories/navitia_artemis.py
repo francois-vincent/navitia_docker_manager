@@ -18,6 +18,8 @@ from navitia_docker_manager import DIM, FFD, utils
 Dockerfile = """
 FROM navitia/debian8:latest
 
+pip install pytest
+
 # mapped volumes
 VOLUME /srv/ed/data
 VOLUME /artemis/data
@@ -76,7 +78,9 @@ def factory(navitia_folder='',
         if commit:
             dcm.stop()
             if version:
-                dcm.commit(FINAL_IMAGE_NAME, version, tag)
+                dcm.commit(FINAL_IMAGE_NAME, version)
+                if tag:
+                    dcm.tag(FINAL_IMAGE_NAME, version)
             else:
                 dcm.commit(FINAL_IMAGE_NAME)
         if remove:
