@@ -20,10 +20,8 @@ FROM navitia/debian8:latest
 
 pip install pytest
 
-# mapped volumes
-VOLUME /srv/ed/data
-VOLUME /artemis/data
-VOLUME /artemis/source
+# mapped volumes (or not)
+RUN mkdir -m 777 -p /srv/ed/data
 
 COPY {supervisord_conf} /etc/supervisor/conf.d/supervisord.conf
 """
@@ -32,7 +30,7 @@ FINAL_IMAGE_NAME = 'navitia/debian8_artemis'
 CONTAINER_NAME = 'artemis'
 
 
-@clingon.clize(artemis_data=('ad,'), artemis_source=('as,'), set_version=('s', 'v'))
+@clingon.clize(artemis_data=('ad',), artemis_source=('as',), set_version=('s', 'v'))
 def factory(navitia_folder='',
             data_folder='',
             port='',
@@ -83,6 +81,8 @@ def factory(navitia_folder='',
                     dcm.tag(FINAL_IMAGE_NAME, version)
             else:
                 dcm.commit(FINAL_IMAGE_NAME)
+        print("Run this image with:")
+        print(dim.print_command(FINAL_IMAGE_NAME, CONTAINER_NAME))
         if remove:
             dcm.remove_container()
     finally:

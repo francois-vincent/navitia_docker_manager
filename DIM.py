@@ -258,6 +258,16 @@ class DockerImageManager(object):
     def create_container(self, container_name=None, **kwargs):
         return DockerContainerManager(self, container_name=container_name).create(**kwargs)
 
+    def print_command(self, image_name, container_name):
+        cmd = "docker run -d"
+        for k, v in self.parameters.kwargs['port_bindings'].iteritems():
+            cmd += ' -p {}:{}'.format(k, v)
+        for k, v in self.parameters.kwargs['binds'].iteritems():
+            cmd += ' -v {}:{}'.format(k, v['bind'])
+        cmd += ' --name {}'.format(container_name)
+        cmd += ' {}'.format(image_name)
+        return cmd
+
 
 class DockerContainerManager(object):
     """
