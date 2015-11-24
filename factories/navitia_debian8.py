@@ -18,7 +18,7 @@ sys.path[0] = ROOT
 from clingon import clingon
 clingon.DEBUG = True
 
-from navitia_docker_manager import DIM
+from navitia_image_manager import DIM
 
 IMAGE_NAME = 'navitia/debian8'
 CONTAINER_NAME = 'navitia_simple'

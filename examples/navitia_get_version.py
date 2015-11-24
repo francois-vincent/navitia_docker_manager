@@ -11,9 +11,9 @@ sys.path[0] = ROOT
 
 from clingon import clingon
 
-from navitia_docker_manager import utils
+from navitia_image_manager import utils
 
 
-@clingon.clize(navitia_folder=('n', 'f'))
-def factory(navitia_folder=''):
-    sys.stdout.write(utils.get_packet_version(navitia_folder))
+@clingon.clize()
+def factory(navitia_packages=''):
+    sys.stdout.write(utils.get_packet_version(navitia_packages))

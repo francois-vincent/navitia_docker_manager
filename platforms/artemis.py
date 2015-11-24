@@ -10,8 +10,8 @@ from common import env_common
 def artemis(host):
     env_common(host, host, host, host)
     env.name = 'artemis'
-    env.postgresql_database_host = 'localhost'
-    # env.cities_database_uri = 'user=navitia password=password host=localhost port=5432 dbname=cities'
+    env.postgresql_database_host = 'artemis_post'
+    env.cities_database_uri = 'user=cities password=cities host=artemis_post port=5432 dbname=cities'
 
     add_instance("corr-02", "corr-02")
     add_instance("airport-01", "airport-01")

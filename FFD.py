@@ -25,7 +25,7 @@ class FabricForDocker(object):
     def set_platform(self, container=None):
         if container:
             self.container = container
-        module = import_module('navitia_docker_manager.platforms.' + self.platform)
+        module = import_module('navitia_image_manager.platforms.' + self.platform)
         api.env.distrib = getattr(self, 'distrib')
         getattr(module, self.platform)(self.get_host() if self.container else 'a@b')
         return self

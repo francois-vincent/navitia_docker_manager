@@ -1,0 +1,14 @@
+artemis_post:
+  image: navitia/postgis
+  ports:
+   - "5432:5432"
+
+artemis:
+  image: navitia/debian8_artemis
+  links:
+  - artemis_post
+  ports:
+   - "80:80"
+  volumes:
+    - "/home/francois/CanalTP/artemis_data:/artemis/data"
+    - "/home/francois/CanalTP/artemis:/artemis/source"

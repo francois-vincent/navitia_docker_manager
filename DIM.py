@@ -332,9 +332,12 @@ class DockerContainerManager(object):
         except docker.errors.NotFound:
             return None
 
-    def exec_container(self, cmd, wait=True):
-        id = docker_client.exec_create(self.container_name, cmd, stdout=False, stdin=False)
-        docker_client.exec_start(execid=id, detach=not wait)
+    def exec_container(self, cmd, stream=True):
+        id = docker_client.exec_create(self.container_name, cmd)
+        if stream:
+            wait(docker_client.exec_start(exec_id=id, stream=True))
+        else:
+            docker_client.exec_start(exec_id=id)
         return self
 
     def copy_from_container(self, guest_path, host_path=None):

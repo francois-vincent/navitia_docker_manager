@@ -11,11 +11,6 @@ priority=100
 user=postgres
 autorestart=true
 
-[program:apache2]
-command=/bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -k start -DFOREGROUND"
-priority=100
-autorestart=true
-
 [program:redis]
 command=/usr/bin/redis-server /etc/redis/redis.conf
 priority=100
@@ -25,6 +20,11 @@ autorestart=true
 command=/usr/sbin/rabbitmq-server
 priority=100
 autorestart=true
+
+[program:apache2]
+command=/bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -k start -DFOREGROUND"
+priority=100
+autorestart=false
 
 [program:tyr_worker]
 command=/usr/local/bin/celery -A tyr.tasks --events --pidfile=/tmp/tyr_worker.pid worker

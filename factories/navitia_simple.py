@@ -20,7 +20,7 @@ sys.path[0] = ROOT
 from clingon import clingon
 clingon.DEBUG = True
 
-from navitia_docker_manager import DIM, FFD, utils
+from navitia_image_manager import DIM, FFD, utils
 
 Dockerfile = """
 FROM navitia/debian8:latest
@@ -35,11 +35,16 @@ FINAL_IMAGE_NAME = 'navitia/debian8_simple'
 CONTAINER_NAME = 'navitia_simple'
 
 
-@clingon.clize(navitia_folder=('n', 'f'), set_version=('s', 'v'))
-def factory(data_folder='', port='', navitia_folder='', commit=False, remove=False, set_version=''):
+@clingon.clize(set_version=('v',))
+def factory(navitia_packages='',
+            data_folder='',
+            port='',
+            commit=False,
+            remove=False,
+            set_version=''):
     if commit:
         if set_version.lower() in ('true', 'yes'):
-            version = utils.get_packet_version(navitia_folder)
+            version = utils.get_packet_version(navitia_packages)
         elif not set_version or set_version.lower() in ('false', 'no'):
             version = None
         else:
@@ -64,7 +69,7 @@ def factory(data_folder='', port='', navitia_folder='', commit=False, remove=Fal
         dcm = dim.create_container(CONTAINER_NAME, start=True, if_exist='remove')
         ffd = FFD.FabricForDocker(dcm, user='navitia', platform='simple', distrib='debian8')
         time.sleep(5)
-        with utils.chdir(navitia_folder):
+        with utils.chdir(navitia_packages):
             ffd.execute('deploy_from_scratch')
         if commit:
             dcm.stop()

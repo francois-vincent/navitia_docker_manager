@@ -16,7 +16,7 @@ sys.path[0] = ROOT
 from clingon import clingon
 clingon.DEBUG = True
 
-from navitia_docker_manager import DIM, FFD, utils
+from navitia_image_manager import DIM, FFD, utils
 
 
 KRIRIN_ROOT = [p for p in sys.path if p.endswith('kirin')][0]
